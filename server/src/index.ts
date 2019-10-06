@@ -3,6 +3,7 @@ import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 
 // schemas
@@ -15,6 +16,12 @@ import { sendRefreshToken } from "./sendRefreshToken";
 
 (async () => {
   const app = express();
+  app.use(
+    cors({
+      credentials: true,
+      origin: "http://localhost:3000",
+    })
+  );
   app.use(cookieParser());
   app.get("/", (_req, res) => res.send("hello"));
   // special route for refresh token
@@ -60,7 +67,7 @@ import { sendRefreshToken } from "./sendRefreshToken";
     }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => {
     console.log("express server started");
